@@ -1,0 +1,522 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Review Blog</title>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #141414;
+            color: white;
+        }
+
+        /* Header */
+        header {
+            background: #e50914;
+            padding: 30px 15px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 16px;
+        }
+
+        /* Navigation */
+        nav {
+            background: #222;
+            padding: 17px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #e50914;
+        }
+
+        /* Main Container */
+        .container {
+            width: 90%;
+            max-width: 1150px;
+            margin: 35px auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+
+        /* Search */
+        .search-box {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        #search {
+            width: 80%;
+            max-width: 500px;
+            padding: 14px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        #search:focus {
+            border-color: #e50914;
+        }
+
+        #message {
+            text-align: center;
+            color: #4ade80;
+            margin-bottom: 20px;
+            min-height: 20px;
+        }
+
+        /* Movie Grid */
+        .movies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 25px;
+        }
+
+        /* Movie Card */
+        .movie-card {
+            background: #252525;
+            border-radius: 12px;
+            overflow: hidden;
+            text-align: center;
+            padding-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-7px);
+        }
+
+        /* Poster */
+        .poster {
+            height: 240px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 75px;
+            background: linear-gradient(135deg, #3b0764, #be123c);
+        }
+
+        .blue {
+            background: linear-gradient(135deg, #164e63, #2563eb);
+        }
+
+        .gold {
+            background: linear-gradient(135deg, #713f12, #ea580c);
+        }
+
+        .green {
+            background: linear-gradient(135deg, #14532d, #0f766e);
+        }
+
+        .purple {
+            background: linear-gradient(135deg, #581c87, #7c3aed);
+        }
+
+        .movie-card h3 {
+            margin: 18px 5px 8px;
+            font-size: 20px;
+        }
+
+        .rating {
+            color: #ffd700;
+            margin: 10px;
+            font-size: 17px;
+        }
+
+        /* Review */
+        .review {
+            display: none;
+            padding: 15px;
+            color: #ddd;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        button {
+            padding: 10px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .review-btn {
+            background: #e50914;
+            color: white;
+        }
+
+        .review-btn:hover {
+            background: #b20710;
+        }
+
+        .like-btn {
+            background: #333;
+            color: white;
+        }
+
+        .like-btn:hover {
+            background: #555;
+        }
+
+        /* About Section */
+        #about {
+            background: #202020;
+            padding: 35px 15px;
+            text-align: center;
+            line-height: 1.8;
+            margin-top: 50px;
+        }
+
+        #about h2 {
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        footer {
+            background: #111;
+            text-align: center;
+            padding: 20px;
+            color: #aaa;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 26px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 8px;
+            }
+
+            #search {
+                width: 100%;
+            }
+
+            .container {
+                width: 92%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header id="home">
+        <h1>🎬 Movie Review Blog</h1>
+        <p>Discover Movies | Read Reviews | Share Your Favorites</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#movies">Movies</a>
+        <a href="#about">About</a>
+    </nav>
+
+    <!-- Main Section -->
+    <div class="container">
+
+        <h2 class="section-title" id="movies">
+            Latest Movie Reviews
+        </h2>
+
+        <!-- Search Box -->
+        <div class="search-box">
+            <input
+                type="text"
+                id="search"
+                placeholder="🔍 Search for a movie..."
+            >
+        </div>
+
+        <p id="message"></p>
+
+        <!-- Movies -->
+        <div class="movies" id="movie-list">
+
+            <!-- Movie 1 -->
+            <div class="movie-card">
+                <div class="poster">🦸</div>
+
+                <h3>Avengers: Endgame</h3>
+
+                <p class="rating">★★★★☆ 4.5/5</p>
+
+                <button class="review-btn">Read Review</button>
+
+                <button class="like-btn">
+                    ❤️ Like <span>0</span>
+                </button>
+
+                <p class="review">
+                    An exciting superhero movie with emotional
+                    moments, amazing action scenes and an
+                    unforgettable ending.
+                </p>
+            </div>
+
+            <!-- Movie 2 -->
+            <div class="movie-card">
+                <div class="poster blue">🚀</div>
+
+                <h3>Interstellar</h3>
+
+                <p class="rating">★★★★★ 5/5</p>
+
+                <button class="review-btn">Read Review</button>
+
+                <button class="like-btn">
+                    ❤️ Like <span>0</span>
+                </button>
+
+                <p class="review">
+                    A brilliant science-fiction movie featuring
+                    space exploration, time, family and
+                    stunning visuals.
+                </p>
+            </div>
+
+            <!-- Movie 3 -->
+            <div class="movie-card">
+                <div class="poster gold">🕷️</div>
+
+                <h3>Spider-Man</h3>
+
+                <p class="rating">★★★★☆ 4/5</p>
+
+                <button class="review-btn">Read Review</button>
+
+                <button class="like-btn">
+                    ❤️ Like <span>0</span>
+                </button>
+
+                <p class="review">
+                    An entertaining superhero adventure with
+                    exciting action, humor and a memorable
+                    main character.
+                </p>
+            </div>
+
+            <!-- Movie 4 -->
+            <div class="movie-card">
+                <div class="poster green">🦁</div>
+
+                <h3>The Lion King</h3>
+
+                <p class="rating">★★★★★ 5/5</p>
+
+                <button class="review-btn">Read Review</button>
+
+                <button class="like-btn">
+                    ❤️ Like <span>0</span>
+                </button>
+
+                <p class="review">
+                    A classic animated adventure about family,
+                    courage, responsibility and finding your
+                    place in the world.
+                </p>
+            </div>
+
+            <!-- Movie 5 -->
+            <div class="movie-card">
+                <div class="poster purple">🧙</div>
+
+                <h3>Harry Potter</h3>
+
+                <p class="rating">★★★★★ 5/5</p>
+
+                <button class="review-btn">Read Review</button>
+
+                <button class="like-btn">
+                    ❤️ Like <span>0</span>
+                </button>
+
+                <p class="review">
+                    A magical fantasy adventure filled with
+                    friendship, mystery and unforgettable
+                    characters.
+                </p>
+            </div>
+
+            <!-- Movie 6 -->
+            <div class="movie-card">
+                <div class="poster blue">🦖</div>
+
+                <h3>Jurassic World</h3>
+
+                <p class="rating">★★★★☆ 4/5</p>
+
+                <button class="review-btn">Read Review</button>
+
+                <button class="like-btn">
+                    ❤️ Like <span>0</span>
+                </button>
+
+                <p class="review">
+                    An exciting dinosaur adventure with
+                    thrilling action and amazing visual effects.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- About Section -->
+    <section id="about">
+
+        <h2>About Movie Review Blog</h2>
+
+        <p>
+            Welcome to Movie Review Blog!
+            Discover your favorite movies,
+            explore reviews and share your opinions.
+        </p>
+
+        <p>
+            Our goal is to help movie lovers
+            find interesting films.
+        </p>
+
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            © 2026 Movie Review Blog |
+            Created using HTML, CSS and jQuery
+        </p>
+    </footer>
+
+    <!-- jQuery Script -->
+    <script>
+
+        $(document).ready(function () {
+
+            // 1. Show and Hide Movie Reviews
+            $(".review-btn").click(function () {
+
+                var button = $(this);
+                var review = button.siblings(".review");
+
+                review.slideToggle(400);
+
+                if (button.text() === "Read Review") {
+                    button.text("Hide Review");
+                } else {
+                    button.text("Read Review");
+                }
+
+            });
+
+            // 2. Search Movies
+            $("#search").on("input", function () {
+
+                var value = $(this).val().toLowerCase();
+
+                $(".movie-card").each(function () {
+
+                    var title = $(this).find("h3").text().toLowerCase();
+
+                    if (title.includes(value)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+
+                });
+
+                $("#message").text(
+                    $(".movie-card:visible").length === 0
+                    ? "No movies found!"
+                    : ""
+                );
+
+            });
+
+            // 3. Like Button
+            $(".like-btn").click(function () {
+
+                var count = $(this).find("span");
+
+                var likes = parseInt(count.text(), 10);
+
+                count.text(likes + 1);
+
+                $("#message").text(
+                    "❤️ Thanks for liking this movie!"
+                );
+
+            });
+
+            // 4. Smooth Navigation
+            $("nav a").click(function (event) {
+
+                var target = $(this).attr("href");
+
+                if ($(target).length) {
+
+                    event.preventDefault();
+
+                    $("html, body").animate({
+
+                        scrollTop: $(target).offset().top - 60
+
+                    }, 600);
+
+                }
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>
